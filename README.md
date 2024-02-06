@@ -1,5 +1,5 @@
 
-# Bacelor thesis: symbolic regression application to massive neutrinos in Cosmology
+# Bacelor thesis: symbolic regression application to massive neutrinos in cosmology
 **Applicazioni della regressione simbolica ai neutrini massivi in cosmologia**
 
 _WORK IN PROGRESS_
