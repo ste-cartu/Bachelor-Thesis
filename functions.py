@@ -8,7 +8,7 @@ import os
 # funzione che, data in input la massa del neutrino, restituisce il power density spectrum P(k,z) o P(k,a) e il growth factor D(z) o D(a) e D(k,z) o D(k,a)
 
 
-def DataFromCLASS(dim_k = 500, dim_z=200, m_neutrino = 0.06, path = 'files') :
+def DataFromCLASS(dim_k = 100, dim_z=20, m_neutrino = 0.06, path = 'files') :
         # creo il modello CLASS, imposto i suoi parametri e lo eseguo
         LCDM = Class()
 
@@ -33,20 +33,20 @@ def DataFromCLASS(dim_k = 500, dim_z=200, m_neutrino = 0.06, path = 'files') :
         # redshift z = [0, 10] e scala k = [10^-4; 3]
         nk = dim_k
         nz = dim_z
-        zz = np.linspace(0, 10, nz)
+        zz = np.linspace(0, 5, nz)
         kk = np.logspace(-4, np.log10(3), nk)*h    # k in 1/Mpc
 
-        filename = 'redshift'
+        filename = 'redshift_[' + str(nz) + ']'
         save = os.path.join(path, filename)
         np.save(save, zz)
-        filename = 'scale'
+        filename = 'scale_[' + str(nk) + ']'
         save = os.path.join(path, filename)
         np.save(save, kk)
 
 
         # growth factor scale independent D(z)
         Dz = np.array([LCDM.scale_independent_growth_factor(z) for z in zz])
-        filename = 'D(z)_m-neu=' + str(round(m_neutrino, 3))
+        filename = 'D(z)_[' + str(nz) + ']_m=' + str(round(m_neutrino, 3))
         save = os.path.join(path, filename)
         np.save(save, Dz)
 
@@ -56,7 +56,7 @@ def DataFromCLASS(dim_k = 500, dim_z=200, m_neutrino = 0.06, path = 'files') :
         for k in range(nk) :
                 for z in range(nz) :
                         Pkz[k,z] = LCDM.pk_lin(kk[k], zz[z])*(h**3)
-        filename = 'P(k,z)_m-neu=' + str(round(m_neutrino, 3))
+        filename = 'P(k,z)_[' + str(nk) + ',' + str(nz) + ']_m=' + str(round(m_neutrino, 3))
         save = os.path.join(path, filename)
         np.save(save, Pkz)
 
@@ -66,7 +66,7 @@ def DataFromCLASS(dim_k = 500, dim_z=200, m_neutrino = 0.06, path = 'files') :
         for k in range(nk) :
                 for z in range(nz) :
                         Dkz[k,z] = np.sqrt(Pkz[k,z]/Pkz[k,0])
-        filename = 'D(k,z)_m-neu=' + str(round(m_neutrino, 3))
+        filename = 'D(k,z)_[' + str(nk) + ',' + str(nz) + ']_m=' + str(round(m_neutrino, 3))
         save = os.path.join(path, filename)
         np.save(save, Dkz)
 
@@ -75,7 +75,7 @@ def DataFromCLASS(dim_k = 500, dim_z=200, m_neutrino = 0.06, path = 'files') :
         mu = np.zeros([nk,nz])
         for k in range(nk) :
                 mu[k,:] = Dkz[k,:] / (Dz/Dz[0])
-        filename = 'Mu(k,z)_m-neu=' + str(round(m_neutrino, 3))
+        filename = 'Mu(k,z)_[' + str(nk) + ',' + str(nz) + ']_m=' + str(round(m_neutrino, 3))
         save = os.path.join(path, filename)
         np.save(save, mu)
 
@@ -102,7 +102,7 @@ def DataFromCLASS(dim_k = 500, dim_z=200, m_neutrino = 0.06, path = 'files') :
 
 def Masses(min = 0.06, max = 1, dim = 10, path = 'files') :
 
-        filename = 'neutrino_mass.npy'
+        filename = 'neutrino_mass_[' + str(dim) + '].npy'
         save = os.path.join(path, filename)
 
         m = np.linspace(min, max, dim)
