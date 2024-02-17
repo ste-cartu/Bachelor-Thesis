@@ -89,9 +89,7 @@ else :
 
 # l'array 'data' è così strutturato:
 # masse neutrino [eV] | k [1/Mpc] (scala) | redshift | valore di mu
-            
-# data1 = np.load('data1.npy')
-# print(data-data1)
+
 
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 # CREAZIONE DEL MODELLO E ALLENAMENTO
