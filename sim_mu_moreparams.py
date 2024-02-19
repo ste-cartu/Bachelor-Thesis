@@ -16,19 +16,10 @@ nz = 20
 nas = 20
 nns = 20
 
-ni = 1000
-comp = 20 
-pop = 50 
-filepath = 'files'
+ni = 4000
+comp = 40 
+pop = 120 
 
-'''
-nm = int(sys.argv[1])
-nk = int(sys.argv[2])
-nz = int(sys.argv[3])
-ni = int(sys.argv[4])
-pop = int(sys.argv[5])
-comp = int(sys.argv[6])
-'''
 
 # –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 # DEFINIZIONE VARIABILI
@@ -118,5 +109,4 @@ else :
 # l'array 'data' è così strutturato:
 # masse neutrino [eV] | k [1/Mpc] (scala) | redshift | As | ns | valore di mu
 
-print('inizio allenamento:')
 model_mu.fit(data[:,:5], data[:,5])
