@@ -1,19 +1,27 @@
 import numpy as np
 import functions as f
+import sys
 
 # parametri cosmologici
-nm = 10         # dimensione array delle masse del neutrino
-nk = 100        # dimensione array dei k
-nz = 20         # dimensione array dei redshift
-# nas = 20
-# nns = 20
+# nm = 10         # dimensione array delle masse del neutrino
+# nk = 100        # dimensione array dei k
+# nz = 20         # dimensione array dei redshift
+
+nm = int(sys.argv[1])
+nk = int(sys.argv[2])
+nz = int(sys.argv[3])
+filepath = 'files'
+
+
+print('\ngenerating dataset: data_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + '].npy\n')
 
 
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# MASSE DEL NEUTRINO
+# MASSE DEL NEUTRINO, SCALA E REDSHIFT
 
-mm = f.Masses(0.06, 1, nm, 'files')
-
+mm = f.Masses(0.06, 1, nm, filepath)
+kk = f.Scale(1e-4, 3, nk, filepath)
+zz = f.Redshift(0, 5, nz, filepath)
 
 
 # –––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
@@ -22,7 +30,10 @@ mm = f.Masses(0.06, 1, nm, 'files')
 cosmos = []
 mus =  []
 for i in range(nm) :
-    cosmos.append(f.DataFromCLASS(nk, nz, mm[i], 'files'))
+    cosmos.append(f.DataFromCLASS(dim_k = nk,
+                                  dim_z = nz,
+                                  m_neutrino = mm[i],
+                                  path = 'files'))
     mus.append(cosmos[i]['growth_ratio'])
 mu = np.array(mus)
 
@@ -41,33 +52,6 @@ for m in range(nm) :
 
 
 
-# ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# SCALA
-
-kk = np.load('files/scale_[' + str(nk) +'].npy')
-
-
-
-# ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# REDSHIFT
-
-zz = np.load('files/redshift_[' + str(nz) +'].npy')
-
-
-
-# ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# AS
-
-# asas = np.linspace(2.5, 3.5, nas)
-
-
-
-# ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# NS
-
-# nsns = np.linspace(0.9, 1, nns)
-
-
 
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 # DATI SU CUI ALLENARE I MODELLI (m,k,z)
@@ -81,32 +65,11 @@ for m in range(nm) :
             data[m*nk*nz+k*nz+z,2] = zz[z]
             data[m*nk*nz+k*nz+z,3] = mu[m,k,z]
 
+            print(m*nk*nz + k*nz + z + 1, '/', nm*nk*nz)
+
         #print(data[m*nk*nz+k*nz+z,0], '\t', data[m*nk*nz+k*nz+z,1], '\t', data[m*nk*nz+k*nz+z,2], '\t', data[m*nk*nz+k*nz+z,3])
 
 np.save('files/data_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ']', data)
 
 # l'array 'data' è così strutturato:
 # masse neutrino [eV] | k [1/Mpc] (scala) | redshift | valore di mu
-
-
-
-# ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# DATI SU CUI ALLENARE I MODELLI (m,k,z,as,ns)
-'''
-data = np.zeros([nm*nk*nz*nas*nns, 6])
-for m in range(nm) :
-    for k in range(nk) :
-        for z in range(nz) :
-            for a in range(nas) :
-                for n in range(nns) :
-                    data[m*nk*nz*nas*nns + k*nz*nas*nns + z*nas*nns + a*nns + n, 0] = mm[m]
-                    data[m*nk*nz*nas*nns + k*nz*nas*nns + z*nas*nns + a*nns + n, 1] = kk[k]
-                    data[m*nk*nz*nas*nns + k*nz*nas*nns + z*nas*nns + a*nns + n, 2] = zz[z]
-                    data[m*nk*nz*nas*nns + k*nz*nas*nns + z*nas*nns + a*nns + n, 3] = asas[a]
-                    data[m*nk*nz*nas*nns + k*nz*nas*nns + z*nas*nns + a*nns + n, 4] = nsns[n]
-                    data[m*nk*nz*nas*nns + k*nz*nas*nns + z*nas*nns + a*nns + n, 5] = mu[m,k,z]
-
-np.save('files/data_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ',' + str(nas) + ',' + str(nns) + ']', data)
-'''
-# l'array 'data' è così strutturato:
-# masse neutrino [eV] | k [1/Mpc] (scala) | redshift | As | ns | valore di mu
