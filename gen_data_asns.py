@@ -16,7 +16,6 @@ nas = int(sys.argv[4])
 nns = int(sys.argv[5])
 filepath = 'files'
 
-
 print('\ngenerating dataset: data_asns_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ',' + str(nas) + ',' + str(nns) + '].npy\n')
 
 
