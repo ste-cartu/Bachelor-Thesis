@@ -28,7 +28,7 @@ pop = 120       # numero di popolazioni da cui parte il modello                 
 
 
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# CREAZIONE DEL DATASET SU CUI ALLENARE IL MODELLO, chiedere a Marco se è più efficiente così o salvare tutto su un dataframe
+# CREAZIONE DEL DATASET SU CUI ALLENARE IL MODELLO
 
 if os.path.exists('files/data_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + '].npy') :
     data = np.load('files/data_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + '].npy')
