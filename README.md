@@ -28,4 +28,4 @@ The trained PySR models, containing the best expressions found by symbolic regre
 In the 'plots' directory there are all the relevant graphics produced during data analisys
 
 ### Reproducibility
-In order to reproduce the analisys of the project, you should mantain the structure of the repository and add a 'data' folder which contains the datasets from the Zenodo relase
+In order to reproduce the analisys of the project, you should mantain the structure of the repository and add a 'files' folder which contains the datasets from the Zenodo relase
