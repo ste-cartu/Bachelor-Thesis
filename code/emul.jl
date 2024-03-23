@@ -12,8 +12,8 @@ nz = 20
 nc = 2000
 ncv = 1000
 
-cicli = 50
-epoche = 20000
+cicli = 20
+epoche = 50000
 div = 5
 
 input = npzread("../files/train_in_neu_sym_" * string(nc) * ".npy")
@@ -38,6 +38,7 @@ h = 0.67810
 kk = exp10.(LinRange(-4, log10(3), 100)) .* h
 
 println("x: ", size(x), '\t', "y: ", size(y))
+
 
 # creo architettura della rete
 layer_size = 64
@@ -93,8 +94,10 @@ function main(tstate::Lux.Experimental.TrainState, vjp, data, epochs, i)
         loss_validation = loss_function(nn, tstate.parameters, tstate.states, val_data)[1]
         if loss_validation < initial_loss_validation
             jldsave("../models/nn_$(cicli)-$(epoche)_$(div).jld2"; tstate)
-            initial_loss_validation = loss_validation
+            global initial_loss_validation = loss_validation
             println("Epoch: $(i).$(epoch)\t|| Training Loss: $(loss)\t|| Validation Loss: $loss_validation")
+        else 
+            println("Epoch: $(i).$(epoch)\t|| Training Loss: $(loss)")
         end
     end
     return tstate
