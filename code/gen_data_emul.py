@@ -250,7 +250,6 @@ def Prim(kk) :
 def Mu_VBCh (k, z, On, Ob, Oc, h) :
 
     # modello 'mu_VBCh(4000,40,120)'
-    # mu = ( (z + 0.913)**((15.9*On)**((k + Oc - 0.254)/(h**2.23))) ) ** (-1.62*On)
     mu = np.e ** ( (On*z) / ( -1.13 ** (z + k * (On ** (-0.532/h))) - np.log(Ob+Oc) - 1.08 ) )
 
     return mu

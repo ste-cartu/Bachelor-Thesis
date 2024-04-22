@@ -248,7 +248,6 @@ def Prim(kk, ln_As_1e10, ns) :
 def Mu_VBCh (k, z, On, Ob, Oc, h) :
 
     # modello 'mu_VBCh(4000,40,120)'
-    # mu = ( (z + 0.913)**((15.9*On)**((k + Oc - 0.254)/(h**2.23))) ) ** (-1.62*On)
     mu = np.e ** ( (On*z) / ( -1.13 ** (z + k * (On ** (-0.532/h))) - np.log(Ob+Oc) - 1.08 ) )
 
     return mu
@@ -288,7 +287,6 @@ sup =       [1/(93.14*(0.6**2)),        0.06,       0.29,      0.8,     3.5,    
 input_v = qmc.scale(sample_v, inf, sup).T
 np.save('../files/val_in_asns_emul_' + str(ncv), input_v)
 print('input validation salvato\n')
-
 
 
 
