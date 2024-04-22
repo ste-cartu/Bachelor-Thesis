@@ -19,6 +19,8 @@ filepath = '../files'
 print('\ngenerating dataset: data_asns_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ',' + str(nas) + ',' + str(nns) + '].npy\n')
 
 
+
+
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 # MASSE DEL NEUTRINO, REDSHIFT, AS, NS
 
@@ -26,6 +28,7 @@ mm = f.Masses(0.06, 1, nm, filepath)
 zz = f.Redshift(0, 5, nz, filepath)
 asas = f.A_s(2.5, 3.5, nas, filepath)
 nsns = f.N_s(0.9, 1, nns, filepath)
+
 
 
 

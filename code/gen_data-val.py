@@ -17,6 +17,7 @@ filepath = '../files'
 
 
 
+
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 # PARAMETRI COSMOLOGICI
 
@@ -27,6 +28,7 @@ nsns = f.N_s(0.9, 1, nns, filepath)
 obob = f.Omega_b(0.020, 0.024, nob, filepath)
 ococ = f.Omega_c(0.10, 0.14, noc, filepath)
 hh = f.H(0.6, 0.8, nh, filepath)
+
 
 
 
@@ -61,6 +63,7 @@ else :
 
     # l'array 'data' è così strutturato:
     # masse neutrino [eV] | k [h/Mpc] (scala) | redshift | valore di mu
+
 
 
 
@@ -104,6 +107,7 @@ else :
 '''
 
 
+
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 # CREAZIONE DEL VALIDATION DATASET (m,omega_b,k,z)
 
@@ -138,6 +142,7 @@ else :
 
     # l'array 'data' è così strutturato:
     # masse neutrino [eV] | k [h/Mpc] (scala) | redshift | omega_b | valore di mu
+
 
 
 
@@ -178,6 +183,7 @@ else :
 
 
 
+
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 # CREAZIONE DEL VALIDATION DATASET (m,h,k,z)
 
@@ -212,6 +218,7 @@ else :
 
     # l'array 'data' è così strutturato:
     # masse neutrino [eV] | k [h/Mpc] (scala) | redshift | h | valore di mu
+
 
 
 

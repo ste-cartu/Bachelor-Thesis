@@ -20,6 +20,7 @@ filepath = '../files'
 
 
 
+
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 # MASSE DEL NEUTRINO, REDSHIFT, OMEGA_B, OMEGA_C, H
 
@@ -28,6 +29,7 @@ zz = f.Redshift(0, 5, nz, filepath)
 obob = f.Omega_b(0.020, 0.024, nob, filepath)
 ococ = f.Omega_c(0.10, 0.14, noc, filepath)
 hh = f.H(0.6, 0.8, nh, filepath)
+
 
 
 
@@ -66,6 +68,7 @@ np.save('../files/data_ob_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ',' + s
 
 
 
+
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 # DATI SU CUI ALLENARE I MODELLI (m,omega_c,k,z)
 
@@ -98,6 +101,7 @@ np.save('../files/data_oc_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ',' + s
 
 # l'array 'data' è così strutturato:
 # masse neutrino [eV] | k [h/Mpc] (scala) | redshift | omega_c | valore di mu
+
 
 
 
