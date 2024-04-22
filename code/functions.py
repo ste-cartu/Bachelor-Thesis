@@ -327,7 +327,3 @@ def H(min = 0.6, max = 0.8, dim = 20, path = '../files') :
 
         return h
 
-
-
-
-# DataFromCLASS(m_neutrino = 0.06)
