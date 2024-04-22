@@ -82,6 +82,7 @@ valid_out = (valid_out .- min_out) ./ (max_out .- min_out)
 
 val_data = (valid_in, valid_out)
 
+
 # alleno la rete
 initial_loss_validation = loss_function(nn, tstate.parameters, tstate.states, val_data)[1]
 function main(tstate::Lux.Experimental.TrainState, vjp, data, epochs, i)
@@ -110,6 +111,3 @@ for i in 1:cicli
     global learning_rate = learning_rate/div
     global opt = Adam(learning_rate)
 end
-
-# salvo lo stato allenato della rete
-# jldsave("../models/nn_$(cicli)-$(epoche)_$(div).jld2"; trained_state)
