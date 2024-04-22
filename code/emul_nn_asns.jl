@@ -80,6 +80,7 @@ valid_out = (valid_out .- min_out) ./ (max_out .- min_out)
 
 val_data = (valid_in, valid_out)
 
+
 # alleno la rete
 initial_loss_validation = loss_function(nn, tstate.parameters, tstate.states, val_data)[1]
 function main(tstate::Lux.Experimental.TrainState, vjp, data, epochs, i)
