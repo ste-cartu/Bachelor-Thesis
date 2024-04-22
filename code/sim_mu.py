@@ -24,6 +24,7 @@ pop = 70        # numero di popolazioni da cui parte il modello                 
 
 
 
+
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 # CREAZIONE DEL DATASET SU CUI ALLENARE IL MODELLO
 
@@ -35,6 +36,7 @@ else :
 
 # l'array 'data' è così strutturato:
 # masse neutrino [eV] | k [1/Mpc] (scala) | redshift | valore di mu
+
 
 
 
