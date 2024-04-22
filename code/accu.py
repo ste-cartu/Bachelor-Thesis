@@ -1,9 +1,6 @@
 import os
 import numpy as np
 from pysr import *
-from matplotlib import pyplot as plt
-#from importlib import reload
-#from classy import Class
 import functions as f
 import sys
 
