@@ -21,7 +21,6 @@ filepath = '../files'
 # PARAMETRI COSMOLOGICI
 
 mm = f.Masses(0.06, 1, nm, filepath)
-kk = f.Scale(1e-4, 3, nk, filepath)
 zz = f.Redshift(0, 5, nz, filepath)
 asas = f.A_s(2.5, 3.5, nas, filepath)
 nsns = f.N_s(0.9, 1, nns, filepath)
@@ -40,11 +39,14 @@ else :
     print('\ngenerating dataset: data-val_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + '].npy\n')
     data = np.zeros([nm*nk*nz, 4])
     for m in range(nm) :
-        mu = f.DataFromCLASS(
-        dim_k = nk,
-        dim_z = nz,
-        m_neutrino = mm[m],
-        path = '../files')['growth_ratio']
+        cosmo = f.DataFromCLASS(
+            dim_k = nk,
+            dim_z = nz,
+            m_neutrino = mm[m],
+            path = '../files')
+
+        kk = cosmo['scale']
+        mu = cosmo['growth_ratio']
 
         for k in range(nk) :
             for z in range(nz) :
@@ -58,7 +60,7 @@ else :
     np.save('../files/data-val_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ']', data)
 
     # l'array 'data' è così strutturato:
-    # masse neutrino [eV] | k [1/Mpc] (scala) | redshift | valore di mu
+    # masse neutrino [eV] | k [h/Mpc] (scala) | redshift | valore di mu
 
 
 
@@ -73,13 +75,16 @@ else :
     for m in range(nm) :
         for a in range(nas) :
             for n in range(nns) :
-                mu = f.DataFromCLASS(
+                cosmo = f.DataFromCLASS(
                     dim_k = nk,
                     dim_z = nz,
                     m_neutrino = mm[m],
                     ln_a_s = asas[a],
                     n_s = nsns[n], 
-                    path = '../files')['growth_ratio']
+                    path = '../files')
+
+                kk = cosmo['scale']
+                mu = cosmo['growth_ratio']
                 
                 for k in range(nk) :
                     for z in range(nz) :
@@ -95,7 +100,7 @@ else :
     np.save('../files/data-val_asns_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ',' + str(nas) + ',' + str(nns) + ']', data)
 
     # l'array 'data' è così strutturato:
-    # masse neutrino [eV] | k [1/Mpc] (scala) | redshift | As | ns | valore di mu
+    # masse neutrino [eV] | k [h/Mpc] (scala) | redshift | As | ns | valore di mu
 '''
 
 
@@ -109,12 +114,15 @@ else :
     data = np.zeros([nm*nob*nk*nz, 5])
     for m in range(nm) :
         for b in range(nob) :
-            mu = f.DataFromCLASS(
+            cosmo = f.DataFromCLASS(
                 dim_k = nk,
                 dim_z = nz,
                 m_neutrino = mm[m],
                 omega_b = obob[b], 
-                path = '../files')['growth_ratio']
+                path = '../files')
+            
+            kk = cosmo['scale']
+            mu = cosmo['growth_ratio']
             
             for k in range(nk) :
                 for z in range(nz) :
@@ -129,7 +137,7 @@ else :
     np.save('../files/data-val_ob_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ',' + str(nob) + ']', data)
 
     # l'array 'data' è così strutturato:
-    # masse neutrino [eV] | k [1/Mpc] (scala) | redshift | omega_b | valore di mu
+    # masse neutrino [eV] | k [h/Mpc] (scala) | redshift | omega_b | valore di mu
 
 
 
@@ -143,12 +151,15 @@ else :
     data = np.zeros([nm*noc*nk*nz, 5])
     for m in range(nm) :
         for c in range(noc) :
-            mu = f.DataFromCLASS(
+            cosmo = f.DataFromCLASS(
                 dim_k = nk,
                 dim_z = nz,
                 m_neutrino = mm[m],
                 omega_c = ococ[c], 
-                path = '../files')['growth_ratio']
+                path = '../files')
+            
+            kk = cosmo['scale']
+            mu = cosmo['growth_ratio']
             
             for k in range(nk) :
                 for z in range(nz) :
@@ -163,12 +174,12 @@ else :
     np.save('../files/data-val_oc_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ',' + str(noc) + ']', data)
 
     # l'array 'data' è così strutturato:
-    # masse neutrino [eV] | k [1/Mpc] (scala) | redshift | omega_c | valore di mu
+    # masse neutrino [eV] | k [h/Mpc] (scala) | redshift | omega_c | valore di mu
 
 
 
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# CREAZIONE DEL VALIDATION DATASET (m,omega_c,k,z)
+# CREAZIONE DEL VALIDATION DATASET (m,h,k,z)
 
 if os.path.exists('../files/data-val_h_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ',' + str(nh) + '].npy') :
     data = np.load('../files/data-val_h_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ',' + str(nh) + '].npy')
@@ -177,12 +188,15 @@ else :
     data = np.zeros([nm*nh*nk*nz, 5])
     for m in range(nm) :
         for h in range(nh) :
-            mu = f.DataFromCLASS(
+            cosmo = f.DataFromCLASS(
                 dim_k = nk,
                 dim_z = nz,
                 m_neutrino = mm[m],
                 h = hh[h], 
-                path = '../files')['growth_ratio']
+                path = '../files')
+            
+            kk = cosmo['scale']
+            mu = cosmo['growth_ratio']
             
             for k in range(nk) :
                 for z in range(nz) :
@@ -197,7 +211,7 @@ else :
     np.save('../files/data-val_h_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ',' + str(nh) + ']', data)
 
     # l'array 'data' è così strutturato:
-    # masse neutrino [eV] | k [1/Mpc] (scala) | redshift | h | valore di mu
+    # masse neutrino [eV] | k [h/Mpc] (scala) | redshift | h | valore di mu
 
 
 
@@ -220,14 +234,17 @@ else :
 
     data = np.zeros([nc*nk*nz, 7])
     for c in range(nc) :
-        mu = f.DataFromCLASS(
+        cosmo = f.DataFromCLASS(
             dim_k = nk,
             dim_z = nz,
             m_neutrino = sample[c,0],
             omega_b = sample[c,1],
             omega_c = sample[c,2],
             h = sample[c,3], 
-            path = '../files')['growth_ratio']
+            path = '../files')
+        
+        kk = cosmo['scale']
+        mu = cosmo['growth_ratio']
         
         for k in range(nk) :
             for z in range(nz) :
@@ -244,18 +261,18 @@ else :
     np.save('../files/data-val_bch_[' + str(nk) + ',' + str(nz) + ',comb=' + str(nc) + ']', data)
 
     # l'array 'data' è così strutturato:
-    # masse neutrino [eV] | k [1/Mpc] (scala) | redshift | omega_b | omega_c | h | valore di mu
+    # masse neutrino [eV] | k [h/Mpc] (scala) | redshift | omega_b | omega_c | h | valore di mu
 
 
 
 
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# CREAZIONE DEL VALIDATION DATASET (m,omega_b,omega_c,h,k,z)
+# CREAZIONE DEL VALIDATION DATASET (Omega_nu,Omega_b,Omega_c,h,k,z)
 
-if os.path.exists('../files/data-val_otherbase_[' + str(nk) + ',' + str(nz) + ',comb=' + str(nc) + '].npy') :
-    data = np.load('../files/data-val_otherbase_[' + str(nk) + ',' + str(nz) + ',comb=' + str(nc) + '].npy')
+if os.path.exists('../files/data-val_VBCh_[' + str(nk) + ',' + str(nz) + ',comb=' + str(nc) + '].npy') :
+    data = np.load('../files/data-val_VBCh_[' + str(nk) + ',' + str(nz) + ',comb=' + str(nc) + '].npy')
 else :
-    print('\ngenerating dataset: data-val_otherbase_[' + str(nk) + ',' + str(nz) + ',comb=' + str(nc) + '].npy\n')
+    print('\ngenerating dataset: data-val_VBCh_[' + str(nk) + ',' + str(nz) + ',comb=' + str(nc) + '].npy\n')
 
     # ipercubo 4d con nc combinazioni
     sampler = qmc.LatinHypercube(d=4)
@@ -268,14 +285,17 @@ else :
 
     data = np.zeros([nc*nk*nz, 7])
     for c in range(nc) :
-        mu = f.DataFromCLASS2(
+        cosmo = f.DataFromCLASS2(
             dim_k = nk,
             dim_z = nz,
             Omega_nu = sample[c,0],
             Omega_b = sample[c,1],
             Omega_c = sample[c,2],
             h = sample[c,3], 
-            path = '../files')['growth_ratio']
+            path = '../files')
+        
+        kk = cosmo['scale']
+        mu = cosmo['growth_ratio']
         
         for k in range(nk) :
             for z in range(nz) :
@@ -289,7 +309,59 @@ else :
 
                 print(c*nk*nz + k*nz + z + 1, '/', nc*nk*nz)
 
-    np.save('../files/data-val_otherbase_[' + str(nk) + ',' + str(nz) + ',comb=' + str(nc) + ']', data)
+    np.save('../files/data-val_VBCh_[' + str(nk) + ',' + str(nz) + ',comb=' + str(nc) + ']', data)
 
     # l'array 'data' è così strutturato:
-    # Omega_nu | k [1/Mpc] (scala) | redshift | Omega_b | Omega_c | h | valore di mu
+    # Omega_nu | k [h/Mpc] (scala) | redshift | Omega_b | Omega_c | h | valore di mu
+
+
+
+
+# ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
+# CREAZIONE DEL VALIDATION DATASET (Omega_nu,Omega_b,Omega_m,h,k,z)
+
+if os.path.exists('../files/data-val_VBMh_[' + str(nk) + ',' + str(nz) + ',comb=' + str(nc) + '].npy') :
+    data = np.load('../files/data-val_VBMh_[' + str(nk) + ',' + str(nz) + ',comb=' + str(nc) + '].npy')
+else :
+    print('\ngenerating dataset: data-val_VBMh_[' + str(nk) + ',' + str(nz) + ',comb=' + str(nc) + '].npy\n')
+
+    # ipercubo 4d con nc combinazioni
+    sampler = qmc.LatinHypercube(d=4)
+    sample = sampler.random(n=nc)
+
+    # Omega_m = Omega_nu + Omega_b + Omega_c, presi dal file 'gen_data_VBCh.py'
+    # ipercubo: [Omega_nu,                  Omega_b,    Omega_m,   h]
+    inf =       [0.06/(93.14*(0.8**2)),     0.04,       0.27,      0.6]
+    sup =       [1/(93.14*(0.6**2)),        0.06,       0.40,      0.8]
+    sample = qmc.scale(sample, inf, sup)
+
+    data = np.zeros([nc*nk*nz, 7])
+    for c in range(nc) :
+        cosmo = f.DataFromCLASS2(
+            dim_k = nk,
+            dim_z = nz,
+            Omega_nu = sample[c,0],
+            Omega_b = sample[c,1],
+            Omega_c = sample[c,2],
+            h = sample[c,3], 
+            path = '../files')
+        
+        kk = cosmo['scale']
+        mu = cosmo['growth_ratio']
+        
+        for k in range(nk) :
+            for z in range(nz) :
+                data[c*nk*nz + k*nz + z, 0] = sample[c,0]
+                data[c*nk*nz + k*nz + z, 1] = kk[k]
+                data[c*nk*nz + k*nz + z, 2] = zz[z]
+                data[c*nk*nz + k*nz + z, 3] = sample[c,1]
+                data[c*nk*nz + k*nz + z, 4] = sample[c,2]
+                data[c*nk*nz + k*nz + z, 5] = sample[c,3]
+                data[c*nk*nz + k*nz + z, 6] = mu[k,z]
+
+                print(c*nk*nz + k*nz + z + 1, '/', nc*nk*nz)
+
+    np.save('../files/data-val_VBMh_[' + str(nk) + ',' + str(nz) + ',comb=' + str(nc) + ']', data)
+
+    # l'array 'data' è così strutturato:
+    # Omega_nu | k [h/Mpc] (scala) | redshift | Omega_b | Omega_m | h | valore di mu

@@ -17,10 +17,9 @@ print('\ngenerating dataset: data_[' + str(nm) + ',' + str(nk) + ',' + str(nz) +
 
 
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# MASSE DEL NEUTRINO, SCALA E REDSHIFT
+# MASSE DEL NEUTRINO E REDSHIFT
 
 mm = f.Masses(0.06, 1, nm, filepath)
-kk = f.Scale(1e-4, 3, nk, filepath)
 zz = f.Redshift(0, 5, nz, filepath)
 
 
@@ -56,13 +55,18 @@ for m in range(nm) :
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 # DATI SU CUI ALLENARE I MODELLI (m,k,z)
 
+print('\ngenerating dataset: data_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + '].npy\n')
+
 data = np.zeros([nm*nk*nz, 4])
 for m in range(nm) :
-    mu = f.DataFromCLASS(
-    dim_k = nk,
-    dim_z = nz,
-    m_neutrino = mm[m],
-    path = '../files')['growth_ratio']
+    cosmo = f.DataFromCLASS(
+        dim_k = nk,
+        dim_z = nz,
+        m_neutrino = mm[m],
+        path = '../files')
+
+    kk = cosmo['scale']
+    mu = cosmo['growth_ratio']
 
     for k in range(nk) :
         for z in range(nz) :
@@ -78,4 +82,4 @@ for m in range(nm) :
 np.save('../files/data_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ']', data)
 
 # l'array 'data' è così strutturato:
-# masse neutrino [eV] | k [1/Mpc] (scala) | redshift | valore di mu
+# masse neutrino [eV] | k [h/Mpc] (scala) | redshift | valore di mu

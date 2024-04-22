@@ -21,10 +21,9 @@ filepath = '../files'
 
 
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# MASSE DEL NEUTRINO, SCALA, REDSHIFT, OMEGA_B, OMEGA_C, H
+# MASSE DEL NEUTRINO, REDSHIFT, OMEGA_B, OMEGA_C, H
 
 mm = f.Masses(0.06, 1, nm, filepath)
-kk = f.Scale(1e-4, 3, nk, filepath)
 zz = f.Redshift(0, 5, nz, filepath)
 obob = f.Omega_b(0.020, 0.024, nob, filepath)
 ococ = f.Omega_c(0.10, 0.14, noc, filepath)
@@ -40,12 +39,15 @@ print('\ngenerating dataset: data_ob_[' + str(nm) + ',' + str(nk) + ',' + str(nz
 data = np.zeros([nm*nob*nk*nz, 5])
 for m in range(nm) :
     for b in range(nob) :
-        mu = f.DataFromCLASS(
+        cosmo = f.DataFromCLASS(
             dim_k = nk,
             dim_z = nz,
             m_neutrino = mm[m],
             omega_b = obob[b], 
-            path = '../files')['growth_ratio']
+            path = '../files')
+        
+        kk = cosmo['scale']
+        mu = cosmo['growth_ratio']
         
         for k in range(nk) :
             for z in range(nz) :
@@ -60,7 +62,7 @@ for m in range(nm) :
 np.save('../files/data_ob_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ',' + str(nob) + ']', data)
 
 # l'array 'data' è così strutturato:
-# masse neutrino [eV] | k [1/Mpc] (scala) | redshift | omega_b | valore di mu
+# masse neutrino [eV] | k [h/Mpc] (scala) | redshift | omega_b | valore di mu
 
 
 
@@ -72,13 +74,16 @@ print('\ngenerating dataset: data_oc_[' + str(nm) + ',' + str(nk) + ',' + str(nz
 data = np.zeros([nm*noc*nk*nz, 5])
 for m in range(nm) :
     for c in range(noc) :
-        mu = f.DataFromCLASS(
+        cosmo = f.DataFromCLASS(
             dim_k = nk,
             dim_z = nz,
             m_neutrino = mm[m],
             omega_c = ococ[c], 
-            path = '../files')['growth_ratio']
+            path = '../files')
         
+        kk = cosmo['scale']
+        mu = cosmo['growth_ratio']
+
         for k in range(nk) :
             for z in range(nz) :
                 data[m*noc*nk*nz + c*nk*nz + k*nz + z, 0] = mm[m]
@@ -92,7 +97,7 @@ for m in range(nm) :
 np.save('../files/data_oc_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ',' + str(noc) + ']', data)
 
 # l'array 'data' è così strutturato:
-# masse neutrino [eV] | k [1/Mpc] (scala) | redshift | omega_c | valore di mu
+# masse neutrino [eV] | k [h/Mpc] (scala) | redshift | omega_c | valore di mu
 
 
 
@@ -109,7 +114,10 @@ for m in range(nm) :
             dim_z = nz,
             m_neutrino = mm[m],
             h = hh[h], 
-            path = '../files')['growth_ratio']
+            path = '../files')
+        
+        kk = cosmo['scale']
+        mu = cosmo['growth_ratio']
         
         for k in range(nk) :
             for z in range(nz) :
@@ -124,4 +132,4 @@ for m in range(nm) :
 np.save('../files/data_h_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ',' + str(nh) + ']', data)
 
 # l'array 'data' è così strutturato:
-# masse neutrino [eV] | k [1/Mpc] (scala) | redshift | h | valore di mu
+# masse neutrino [eV] | k [h/Mpc] (scala) | redshift | h | valore di mu

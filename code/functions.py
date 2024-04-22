@@ -44,7 +44,7 @@ def DataFromCLASS(dim_k = 100,
         nk = dim_k
         nz = dim_z
         zz = np.linspace(0, 5, nz)
-        kk = np.logspace(-4, np.log10(3), nk)*h    # k in 1/Mpc
+        kk = np.logspace(-4, np.log10(3), nk)*h    # k in h/Mpc
 
         filename = 'redshift_[' + str(nz) + ']'
         save = os.path.join(path, filename)
@@ -74,15 +74,15 @@ def DataFromCLASS(dim_k = 100,
         for k in range(nk) :
                 mu[k,:] = dkz[k,:] / (dz/dz[0])
         filename = 'Mu(k,z)_[' +str(nk)+ ',' +str(nz)+ ']_m=' +str(round(m_neutrino, 3))+ '_Ob=' +str(round(omega_b, 3))+ '_Oc=' +str(round(omega_c, 3))+ '_h=' +str(round(h, 2))
-        save = os.path.join(path, filename)
-        np.save(save, mu)
+        # save = os.path.join(path, filename)
+        # np.save(save, mu)
 
         return {'redshift': zz, 'scale':kk, 'power_spectrum': pkz, 'growth_numeric': dz, 'growth_analitic': dkz, 'growth_ratio': mu}
 
 
 
 
-# input: razione di neutrini, Omega_b, Omega_c, h
+# input: Omega_nu, Omega_b, Omega_c, h
 def DataFromCLASS2(dim_k = 100,
                   dim_z = 20,
                   Omega_nu = 0.06/((0.67810**2) * 93.14),
@@ -116,7 +116,7 @@ def DataFromCLASS2(dim_k = 100,
         nk = dim_k
         nz = dim_z
         zz = np.linspace(0, 5, nz)
-        kk = np.logspace(-4, np.log10(3), nk)*h    # k in 1/Mpc
+        kk = np.logspace(-4, np.log10(3), nk)*h    # k in h/Mpc
 
         filename = 'redshift_[' + str(nz) + ']'
         save = os.path.join(path, filename)
@@ -146,8 +146,80 @@ def DataFromCLASS2(dim_k = 100,
         for k in range(nk) :
                 mu[k,:] = dkz[k,:] / (dz/dz[0])
         filename = 'Mu(k,z)_[' +str(nk)+ ',' +str(nz)+ ']_Onu=' +str(round(Omega_nu, 3))+ '_OB=' +str(round(Omega_b, 3))+ '_OC=' +str(round(Omega_c, 3))+ '_h=' +str(round(h, 2))
+        # save = os.path.join(path, filename)
+        # np.save(save, mu)
+
+        return {'redshift': zz, 'scale':kk, 'power_spectrum': pkz, 'growth_numeric': dz, 'growth_analitic': dkz, 'growth_ratio': mu}
+
+
+
+
+# input: Omega_nu, Omega_b, Omega_m, h
+def DataFromCLASS3(dim_k = 100,
+                  dim_z = 20,
+                  Omega_nu = 0.06/((0.67810**2) * 93.14),
+                  Omega_b = 0.02238280/(0.67810**2),                                            # Omega = omega/(h^2)
+                  Omega_m = ((0.06/93.14) + 0.02238280 + 0.1201075)/(0.67810**2),               # Omega_m = Omega_nu + Omega_b + Omega_c
+                  h = 0.67810,
+                  path = '../files'
+                  ) :
+        
+        # creo il modello CLASS, imposto i suoi parametri e lo eseguo
+        LCDM = Class()
+
+        LCDM.set({'Omega_b': Omega_b, 
+                'Omega_m': Omega_m, 
+                'h': h,
+                'tau_reio': 0.05430842,
+                'z_max_pk': 10,
+                'N_ncdm': 1,
+                'Omega_ncdm': Omega_nu,
+                })
+        LCDM.set({'output': 'tCl,pCl,lCl,mPk',
+                'lensing':'yes',
+                'P_k_max_h/Mpc': 10, 
+                'z_max_pk': 10
+                })
+
+        LCDM.compute()
+        h = LCDM.h()
+
+        # redshift z = [0, 10] e scala k = [10^-4; 3]
+        nk = dim_k
+        nz = dim_z
+        zz = np.linspace(0, 5, nz)
+        kk = np.logspace(-4, np.log10(3), nk)*h    # k in h/Mpc
+
+        filename = 'redshift_[' + str(nz) + ']'
         save = os.path.join(path, filename)
-        np.save(save, mu)
+        np.save(save, zz)
+        filename = 'scale_[' + str(nk) + ']'
+        save = os.path.join(path, filename)
+        np.save(save, kk)
+
+
+        # growth factor scale independent D(z)
+        dz = np.array([LCDM.scale_independent_growth_factor(z) for z in zz])
+
+        # calcolo il Power Spectrum pkz(k,z) per tutti i valori di k e z
+        pkz = np.zeros([nk,nz])
+        for k in range(nk) :
+                for z in range(nz) :
+                        pkz[k,z] = LCDM.pk_lin(kk[k], zz[z])*(h**3)
+
+        # estraggo il growth factor normalizato dal rapporto Pka(k,z)/Pka(k,0)
+        dkz = np.zeros([nk,nz])
+        for k in range(nk) :
+                for z in range(nz) :
+                        dkz[k,z] = np.sqrt(pkz[k,z]/pkz[k,0])
+
+        # estraggo i mu
+        mu = np.zeros([nk,nz])
+        for k in range(nk) :
+                mu[k,:] = dkz[k,:] / (dz/dz[0])
+        filename = 'Mu(k,z)_[' +str(nk)+ ',' +str(nz)+ ']_Onu=' +str(round(Omega_nu, 3))+ '_OB=' +str(round(Omega_b, 3))+ '_OM=' +str(round(Omega_m, 3))+ '_h=' +str(round(h, 2))
+        # save = os.path.join(path, filename)
+        # np.save(save, mu)
 
         return {'redshift': zz, 'scale':kk, 'power_spectrum': pkz, 'growth_numeric': dz, 'growth_analitic': dkz, 'growth_ratio': mu}
 
@@ -166,7 +238,7 @@ def Masses(min = 0.06, max = 1, dim = 10, path = '../files') :
 
 
 
-
+'''
 def Scale(min = 1e-4, max = 3, dim = 100, path = '../files') :
 
         filename = 'scale_[' + str(dim) + '].npy'
@@ -176,7 +248,7 @@ def Scale(min = 1e-4, max = 3, dim = 100, path = '../files') :
         np.save(save, k)
 
         return k
-
+'''
 
 
 

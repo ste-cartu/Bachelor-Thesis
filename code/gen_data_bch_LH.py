@@ -16,9 +16,8 @@ filepath = '../files'
 
 
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# SCALA E REDSHIFT
+# REDSHIFT
 
-kk = f.Scale(1e-4, 3, nk, filepath)
 zz = f.Redshift(0, 5, nz, filepath)
 
 
@@ -46,14 +45,17 @@ print('\ngenerating dataset: data_bch_[' + str(nk) + ',' + str(nz) + ',comb=' + 
 
 data = np.zeros([nc*nk*nz, 7])
 for c in range(nc) :
-    mu = f.DataFromCLASS(
+    cosmo = f.DataFromCLASS(
         dim_k = nk,
         dim_z = nz,
         m_neutrino = sample[c,0],
         omega_b = sample[c,1],
         omega_c = sample[c,2],
         h = sample[c,3], 
-        path = '../files')['growth_ratio']
+        path = '../files')
+    
+    kk = cosmo['scale']
+    mu = cosmo['growth_ratio']
     
     for k in range(nk) :
         for z in range(nz) :
@@ -70,4 +72,4 @@ for c in range(nc) :
 np.save('../files/data_bch_[' + str(nk) + ',' + str(nz) + ',comb=' + str(nc) + ']', data)
 
 # l'array 'data' è così strutturato:
-# masse neutrino [eV] | k [1/Mpc] (scala) | redshift | omega_b | omega_c | h | valore di mu
+# masse neutrino [eV] | k [h/Mpc] (scala) | redshift | omega_b | omega_c | h | valore di mu

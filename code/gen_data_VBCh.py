@@ -34,6 +34,7 @@ sample = sampler.random(n=nc)
 inf =       [0.06/(93.14*(0.8**2)),     0.04,       0.23,      0.6]
 sup =       [1/(93.14*(0.6**2)),        0.06,       0.29,      0.8]
 sample = qmc.scale(sample, inf, sup)
+# limiti Omega_nu: [0.00100655, 0.02982368]
 
 
 
@@ -73,4 +74,4 @@ for c in range(nc) :
 np.save('../files/data_VBCh_[' + str(nk) + ',' + str(nz) + ',comb=' + str(nc) + ']', data)
 
 # l'array 'data' è così strutturato:
-# Omega_nu | k [1/Mpc] (scala) | redshift | Omega_b | Omega_c | h | valore di mu
+# Omega_nu | k [h/Mpc] (scala) | redshift | Omega_b | Omega_c | h | valore di mu

@@ -20,10 +20,9 @@ print('\ngenerating dataset: data_asns_[' + str(nm) + ',' + str(nk) + ',' + str(
 
 
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# MASSE DEL NEUTRINO, SCALA, REDSHIFT, AS, NS
+# MASSE DEL NEUTRINO, REDSHIFT, AS, NS
 
 mm = f.Masses(0.06, 1, nm, filepath)
-kk = f.Scale(1e-4, 3, nk, filepath)
 zz = f.Redshift(0, 5, nz, filepath)
 asas = f.A_s(2.5, 3.5, nas, filepath)
 nsns = f.N_s(0.9, 1, nns, filepath)
@@ -33,17 +32,22 @@ nsns = f.N_s(0.9, 1, nns, filepath)
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
 # DATI SU CUI ALLENARE I MODELLI (m,as,ns,k,z)
 
+print('\ngenerating dataset: data_asns_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ',' + str(nas) + ',' + str(nns) + '].npy\n')
+
 data = np.zeros([nm*nk*nz*nas*nns, 6])
 for m in range(nm) :
     for a in range(nas) :
         for n in range(nns) :
-            mu = f.DataFromCLASS(
+            cosmo = f.DataFromCLASS(
                 dim_k = nk, 
                 dim_z = nz, 
                 m_neutrino = mm[m], 
                 ln_a_s = asas[a], 
                 n_s = nsns[n], 
-                path = '../files')['growth_ratio']
+                path = '../files')
+            
+            kk = cosmo['scale']
+            mu = cosmo['growth_ratio']
             
             for k in range(nk) :
                 for z in range(nz) :
@@ -59,4 +63,4 @@ for m in range(nm) :
 np.save('../files/data_asns_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + ',' + str(nas) + ',' + str(nns) + ']', data)
 
 # l'array 'data' è così strutturato:
-# masse neutrino [eV] | k [1/Mpc] (scala) | redshift | As | ns | valore di mu
+# masse neutrino [eV] | k [h/Mpc] (scala) | redshift | As | ns | valore di mu

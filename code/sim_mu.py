@@ -14,8 +14,8 @@ nz = 20         # dimensione array dei redshift
 
 # parametri del modello
 ni = 1000       # numero di iterazioni del modello                                  DEFAULT 40 / BEST 4000
-comp = 30       # complessità del modello (numero degli elementi nell'equazione)    DEFAULT 20 / BEST 40
-pop = 20        # numero di popolazioni da cui parte il modello                     DEFAULT 15 / BEST 120
+comp = 25       # complessità del modello (numero degli elementi nell'equazione)    DEFAULT 20 / BEST 40
+pop = 70        # numero di popolazioni da cui parte il modello                     DEFAULT 15 / BEST 120
 
 # per inserire i parametri da terminale
 # ni = int(sys.argv[1])
@@ -32,7 +32,6 @@ if os.path.exists('../files/data_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + 
 else :
     os.system(f'python3 gen_data.py {nm} {nk} {nz}')
     data = np.load('../files/data_[' + str(nm) + ',' + str(nk) + ',' + str(nz) + '].npy')
-
 
 # l'array 'data' è così strutturato:
 # masse neutrino [eV] | k [1/Mpc] (scala) | redshift | valore di mu

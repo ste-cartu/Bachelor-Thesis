@@ -16,7 +16,7 @@ nns = 20
 
 # parametri del modello
 ni = 200
-comp = 20
+comp = 30
 pop = 50
 
 

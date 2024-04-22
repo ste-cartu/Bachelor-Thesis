@@ -103,7 +103,7 @@ def pk_EisensteinHu_zb(k, sigma8, Om, Ob, h, ns, use_colossus=False):
 
 
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# codice di Pedro per power spectrum baryon
+# Pedro code for baryon power spectrum
 
 def pk_EisensteinHu_b(k, sigma8, Om, Ob, h, ns):
     """
@@ -139,7 +139,7 @@ def pk_EisensteinHu_b(k, sigma8, Om, Ob, h, ns):
 
 
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# codice di Pedro per logF
+# Pedro code for logF
 
 def logF_fiducial(k, sigma8, Om, Ob, h, ns, extrapolate=False):
     """
@@ -214,15 +214,10 @@ def logF_fiducial(k, sigma8, Om, Ob, h, ns, extrapolate=False):
 
 
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# estrazione transfer function con codice Pedro (transfer(Eisensten e Hu)**2) * exp(log(F_fiducial))
+# transfer function from Pedro code (transfer(Eisensten e Hu)**2) * exp(log(F_fiducial))
 
-def Transfer2(kk) :
+def Transfer2(kk, On, Ob, Oc, h) :
 
-    # using CLASS default cosmological parameters
-    h = 0.67810
-    Ob = 0.02238280
-    Oc = 0.1201075/(h**2)
-    On = 0.06/((h**2) * 93.14)
     Om = On + Ob + Oc
     sigma8 = 0.824398
     ns = 0.9660499
@@ -237,7 +232,7 @@ def Transfer2(kk) :
 
 
 # ––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––
-# funzione che calcola il power spectrum primordiale (valori dei parametri presi da class e da tesi francesco)
+# funzione che calcola il power spectrum primordiale
 
 def Prim(kk) :
     As = 2.100549e-09
@@ -275,7 +270,7 @@ sample = sampler.random(n=nc)
 inf =       [0.06/(93.14*(0.8**2)),     0.04,       0.23,      0.6]
 sup =       [1/(93.14*(0.6**2)),        0.06,       0.29,      0.8]
 input = qmc.scale(sample, inf, sup).T
-np.save('../files/train_in_neu_sym_' + str(nc), input)
+np.save('../files/train_in_emul_' + str(nc), input)
 print('input training salvato\n')
 
 
@@ -293,8 +288,11 @@ sample_v = sampler_v.random(n=ncv)
 inf =       [0.06/(93.14*(0.8**2)),     0.04,       0.23,      0.6]
 sup =       [1/(93.14*(0.6**2)),        0.06,       0.29,      0.8]
 input_v = qmc.scale(sample_v, inf, sup).T
-np.save('../files/val_in_neu_sym_' + str(ncv), input_v)
+np.save('../files/val_in_emul_' + str(ncv), input_v)
 print('input validation salvato\n')
+
+#input = np.load('../files/train_in_emul_' + str(nc) + '.npy')
+#input_v = np.load('../files/val_in_emul_' + str(ncv) + '.npy')
 
 
 
@@ -304,6 +302,11 @@ print('input validation salvato\n')
 
 print('calcolo l\'output del training dataset:')
 output = np.zeros([nc,nk,nz])
+pkz = np.zeros([nc,nk,nz])
+mu2 = np.zeros([nc,nk,nz])
+prim = np.zeros([nc,nk])
+tf2 = np.zeros([nc,nk])
+
 for c in range(nc) :
     LCDM = Class()
 
@@ -329,22 +332,26 @@ for c in range(nc) :
     kk = np.logspace(-4, np.log10(3), nk)
     kkh = kk*h
 
-    pkz = np.zeros([nk,nz])
-    mu2 = np.zeros([nk,nz])
-    prim = Prim(kk)
-    tf2 = Transfer2(kkh)
+    prim[c,:] = Prim(kk)
+    tf2[c,:] = Transfer2(kkh, input[0,c], input[1,c], input[2,c], h)
 
     for k in range(nk) :
         for z in range(nz) :
-            pkz[k,z] = LCDM.pk_lin(kkh[k], zz[z])*(h**3)
-            mu2[k,z] = (Mu_VBCh(kkh[k], zz[z], input[0,c], input[1,c], input[2,c], input[3,c])) **2
+            pkz[c,k,z] = LCDM.pk_lin(kkh[k], zz[z])*(h**3)
+            mu2[c,k,z] = (Mu_VBCh(kkh[k], zz[z], input[0,c], input[1,c], input[2,c], input[3,c])) **2
 
-            output[c,k,z] = pkz[k,z] / (prim[k] * tf2[k] * mu2[k,z])
+            output[c,k,z] = pkz[c,k,z] / (prim[c,k] * tf2[c,k] * mu2[c,k,z])
 
     print(c+1, '/', nc)
 
 output = np.reshape(output, [nc,nk*nz])
-np.save('../files/train_out_neu_sym_' + str(nc), output)
+
+np.save('../files/train_out_emul_' + str(nc), output)
+np.save('../files/train_pkz_emul_' + str(nc), pkz)
+np.save('../files/train_mu2_emul_' + str(nc), mu2)
+np.save('../files/train_prim_emul_' + str(nc), prim)
+np.save('../files/train_tf2_emul_' + str(nc), tf2)
+
 print('output training salvato\n')
 
 
@@ -355,6 +362,11 @@ print('output training salvato\n')
 
 print('calcolo l\'output del validation dataset:')
 output_v = np.zeros([ncv,nk,nz])
+pkz_v = np.zeros([ncv,nk,nz])
+mu2_v = np.zeros([ncv,nk,nz])
+prim_v = np.zeros([ncv,nk])
+tf2_v = np.zeros([ncv,nk])
+
 for c in range(ncv) :
     LCDM = Class()
 
@@ -380,20 +392,24 @@ for c in range(ncv) :
     kk = np.logspace(-4, np.log10(3), nk)
     kkh = kk*h
 
-    pkz = np.zeros([nk,nz])
-    mu2 = np.zeros([nk,nz])
-    prim = Prim(kk)
-    tf2 = Transfer2(kkh)
+    prim_v[c,:] = Prim(kk)
+    tf2_v[c,:] = Transfer2(kkh, input_v[0,c], input_v[1,c], input_v[2,c], h)
 
     for k in range(nk) :
         for z in range(nz) :
-            pkz[k,z] = LCDM.pk_lin(kkh[k], zz[z])*(h**3)
-            mu2[k,z] = (Mu_VBCh(kkh[k], zz[z], input_v[0,c], input_v[1,c], input_v[2,c], input_v[3,c])) **2
+            pkz_v[c,k,z] = LCDM.pk_lin(kkh[k], zz[z])*(h**3)
+            mu2_v[c,k,z] = (Mu_VBCh(kkh[k], zz[z], input_v[0,c], input_v[1,c], input_v[2,c], input_v[3,c])) **2
 
-            output_v[c,k,z] = pkz[k,z] / (prim[k] * tf2[k] * mu2[k,z])
+            output_v[c,k,z] = pkz_v[c,k,z] / (prim_v[c,k] * tf2_v[c,k] * mu2_v[c,k,z])
 
     print(c+1, '/', ncv)
 
 output_v = np.reshape(output_v, [ncv,nk*nz])
-np.save('../files/val_out_neu_sym_' + str(ncv), output_v)
+
+np.save('../files/val_out_emul_' + str(ncv), output_v)
+np.save('../files/val_pkz_emul_' + str(ncv), pkz_v)
+np.save('../files/val_mu2_emul_' + str(ncv), mu2_v)
+np.save('../files/val_prim_emul_' + str(ncv), prim_v)
+np.save('../files/val_tf2_emul_' + str(ncv), tf2_v)
+
 print('output validation salvato\n')

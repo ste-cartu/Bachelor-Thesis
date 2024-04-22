@@ -1,8 +1,6 @@
 using Lux, Optimisers, Random, Statistics, Zygote
-using CairoMakie, MakiePublication
+using CairoMakie
 using PyCall, NPZ
-using Flux: params
-using ColorSchemes
 using JLD2
 
 np = pyimport("numpy")
@@ -13,14 +11,14 @@ nc = 2000
 ncv = 1000
 
 cicli = 20
-epoche = 50000
+epoche = 20000
 div = 5
 
-input = npzread("../files/train_in_neu_sym_" * string(nc) * ".npy")
-output = npzread("../files/train_out_neu_sym_" * string(nc) * ".npy")
+input = npzread("../files/train_in_asns_emul_" * string(nc) * ".npy")
+output = npzread("../files/train_pkz_asns_emul_" * string(nc) * ".npy")
 
 x = input
-y = output'
+y = np.reshape(output, [nc,nk*nz])'
 
 # standardizzazione del trainig dataset (feature - min(features))/(max(features) - min(features))
 min_in = minimum(x, dims=2)
@@ -74,10 +72,10 @@ function loss_function(model, ps, st, data)
 end
 
 # importo il validation dataset e calcolo la loss sul validation
-valid_in = npzread("../files/val_in_neu_sym_" * string(ncv) * ".npy")
+valid_in = npzread("../files/val_in_asns_emul_" * string(ncv) * ".npy")
 valid_in = (valid_in .- min_in) ./ (max_in .- min_in)
-valid_out = npzread("../files/val_out_neu_sym_" * string(ncv) * ".npy")
-valid_out = valid_out'
+valid_out = npzread("../files/val_pkz_asns_emul_" * string(ncv) * ".npy")
+valid_out = np.reshape(valid_out, [ncv,nk*nz])'
 valid_out = (valid_out .- min_out) ./ (max_out .- min_out)
 
 val_data = (valid_in, valid_out)
@@ -93,7 +91,7 @@ function main(tstate::Lux.Experimental.TrainState, vjp, data, epochs, i)
 
         loss_validation = loss_function(nn, tstate.parameters, tstate.states, val_data)[1]
         if loss_validation < initial_loss_validation
-            jldsave("../models/nn_$(cicli)-$(epoche)_$(div).jld2"; tstate)
+            jldsave("../models/nn_asns_$(cicli)-$(epoche)_$(div).jld2"; tstate)
             global initial_loss_validation = loss_validation
             println("Epoch: $(i).$(epoch)\t|| Training Loss: $(loss)\t|| Validation Loss: $loss_validation")
         else 
@@ -110,6 +108,3 @@ for i in 1:cicli
     global learning_rate = learning_rate/div
     global opt = Adam(learning_rate)
 end
-
-# salvo lo stato allenato della rete
-# jldsave("../models/nn_$(cicli)-$(epoche)_$(div).jld2"; trained_state)
